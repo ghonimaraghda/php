@@ -50,6 +50,27 @@ class DB_Functions {
             return false;
         }
     }
+
+    public function storeCart($shopName, $productName, $Price,$user_ID) {
+        
+        $stmt = $this->conn->prepare("INSERT INTO cart(shopName, productName, Price, user_ID) VALUES(?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $shopName, $productName, $Price, $user_ID);
+        $result = $stmt->execute();
+        $stmt->close();
+ 
+        // check for successful store
+        if ($result) {
+            $stmt = $this->conn->prepare("SELECT * FROM cart WHERE productName = ?");
+            $stmt->bind_param("s", $productName);
+            $stmt->execute();
+            $cart = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+ 
+            return $cart;
+        } else {
+            return false;
+        }
+    }
  
     /**
      * Get user by email and password
